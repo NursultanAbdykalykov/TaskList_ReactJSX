@@ -18,6 +18,10 @@ function App() {
   function addTask(task) {
     setTasks([...tasks, { ...task, completed: false, id: Date.now() }]);
   }
+
+  const activeTasks = tasks.filter((task) => !task.completed);
+  const completedTasks = tasks.filter((task) => task.completed);
+
   return (
     <div className="task-app">
       <div className="task-container">
@@ -42,7 +46,7 @@ function App() {
           <button className="sort-button">By Date</button>
           <button className="sort-button">By Priority</button>
         </div>
-        {openSection.tasks && <TaskList />}
+        {openSection.tasks && <TaskList activeTask={activeTasks} />}
       </div>
       <div className="completed-task-container">
         <h2>Completed Task</h2>
@@ -86,7 +90,7 @@ function TaskForm({ addTask }) {
       <select value={priority} onChange={(e) => setPriority(e.target.value)}>
         <option value="Low">Low</option>
         <option value="Medium">Medium</option>
-        <option value="Hight">Hight</option>
+        <option value="High">High</option>
       </select>
       <input
         type="datetime-local"
@@ -99,30 +103,32 @@ function TaskForm({ addTask }) {
   );
 }
 
-function TaskList() {
+function TaskList({ activeTask }) {
   return (
     <ul className="task-list">
-      <TaskItem />
+      {activeTask.map((task) => (
+        <TaskItem task={task} key={task.id} />
+      ))}
     </ul>
   );
 }
 
 function CompletedTaskList() {
-  return (
-    <ul className="completed-task-list">
-      <TaskItem />
-    </ul>
-  );
+  return <ul className="completed-task-list">{/* <TaskItem /> */}</ul>;
 }
 
-function TaskItem() {
+function TaskItem({ task }) {
+  const { title, priority, deadline, id } = task;
+
   return (
-    <li className="task-item">
+    <li className={`task-item ${priority.toLowerCase()}`}>
       <div className="task-info">
         <div>
-          Title <strong>Medium</strong>
+          {title} <strong>{priority}</strong>
         </div>
-        <div className="task-deadline">Due: {new Date().toLocaleString()}</div>
+        <div className="task-deadline">
+          Due: {new Date(deadline).toLocaleString()}
+        </div>
       </div>
       <div className="task-buttons">
         <button className="complete-button">Complete</button>
