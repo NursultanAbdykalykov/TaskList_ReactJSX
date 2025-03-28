@@ -1,24 +1,54 @@
+import { useState } from "react";
+
 function App() {
+  const [openSection, setOpenSection] = useState({
+    taskList: false,
+    tasks: true,
+    completed: true,
+  });
+
+  function toggleSection(section) {
+    setOpenSection((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  }
+
   return (
     <div className="task-app">
       <div className="task-container">
         <h1>Task List with Priority</h1>
-        <button className="close-button">+</button>
-        <TaskForm />
+        <button
+          className={`close-button ${openSection.taskList ? "open" : ""}`}
+          onClick={() => toggleSection("taskList")}
+        >
+          +
+        </button>
+        {openSection.taskList && <TaskForm />}
       </div>
       <div className="task-container">
         <h2>Tasks</h2>
-        <button className="close-button">+</button>
+        <button
+          className={`close-button ${openSection.tasks ? "open" : ""}`}
+          onClick={() => toggleSection("tasks")}
+        >
+          +
+        </button>
         <div className="sort-controls">
           <button className="sort-button">By Date</button>
           <button className="sort-button">By Priority</button>
         </div>
-        <TaskList />
+        {openSection.tasks && <TaskList />}
       </div>
       <div className="completed-task-container">
         <h2>Completed Task</h2>
-        <button className="close-button">+</button>
-        <CompletedTaskList />
+        <button
+          className={`close-button ${openSection.completed ? "open" : ""}`}
+          onClick={() => toggleSection("completed")}
+        >
+          +
+        </button>
+        {openSection.completed && <CompletedTaskList />}
       </div>
       <Footer />
     </div>
@@ -29,10 +59,10 @@ function TaskForm() {
   return (
     <form action="" className="task-form">
       <input type="text" value={""} placeholder="Task title" required />
-      <select value={""}>
-        <option value="Hight">Hight</option>
-        <option value="Medium">Medium</option>
+      <select value={"Low"}>
         <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="Hight">Hight</option>
       </select>
       <input type="datetime-local" required value={""} />
       <button type="submit">Add task</button>
